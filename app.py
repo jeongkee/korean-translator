@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 import docx2txt
 import re
 from googletrans import Translator
@@ -15,17 +15,7 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 # 메인 페이지 - 파일 업로드 폼
 @app.route('/')
 def index():
-    return '''
-    <html>
-        <body>
-            <h2>문서 번역기</h2>
-            <form action="/translate" method="post" enctype="multipart/form-data">
-                <input type="file" name="file" accept=".docx">
-                <input type="submit" value="번역하기">
-            </form>
-        </body>
-    </html>
-    '''
+    return render_template('index.html')
 
 @app.route('/translate', methods=['POST'])
 def translate_document():
@@ -45,8 +35,8 @@ def translate_document():
         # 문서에서 텍스트 추출
         text = docx2txt.process(filepath)
         
-        # 문장 단위로 분리
-        sentences = re.split('(?<=[.!?])\s+', text)
+        # 문장 단위로 분리 
+        sentences = re.split(r'(?<=[.!?])\s+', text)
         
         # 번역기 초기화
         translator = Translator()
@@ -104,4 +94,5 @@ def translate_text(translator, text):
         return text, text
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8000)))
+    
