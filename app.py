@@ -1,4 +1,13 @@
 # app.py
+
+from flask import Flask, request, jsonify, send_file, render_template
+import os
+# ... (기존 import 유지)
+
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = '/tmp/uploads'  # 임시 폴더 경로 변경
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 from flask import Flask, request, jsonify, send_file, render_template
 import docx2txt
 import re
@@ -93,6 +102,7 @@ def translate_text(translator, text):
     except Exception as e:
         return text, text
 
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8000)))
-    
+    port = int(os.environ.get('PORT', 8000))
+    app.run(host='0.0.0.0', port=port)
